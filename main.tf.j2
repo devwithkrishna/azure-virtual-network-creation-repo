@@ -1,0 +1,14 @@
+module "vnet" {
+  source = "git::https://github.com/devwithkrishna/azure-virtual-network-terraform-module"
+
+  # variables passed to the module
+  application_name    = "{{ application_name }}"
+  environment         = "{{ environment }}"
+  temporary           = "{{ temporary }}"
+  location            = "{{ location }}"
+  resource_group_name = "{{ resource_group_name }}"
+  vnet_name           = "{{ vnet_name }}"
+  subnet_cidrs = [{% for cidr in subnet_cidrs %}"{{ cidr }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+  vnet_address_space  = [{% for cidr in vnet_address_space %}"{{ cidr }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+
+}

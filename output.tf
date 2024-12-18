@@ -13,11 +13,6 @@ output "vnet_environment" {
   value = module.vnet.vnet_environment
 }
 
-output "vnet_resource_group_name" {
-  description = "Azure resource group name"
-  value = module.vnet.vnet_resource_group_name
-}
-
 output "vnet_name" {
   description = "Azure virtual network name"
   value = module.vnet.vnet_name
