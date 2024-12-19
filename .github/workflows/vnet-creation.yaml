@@ -1,0 +1,122 @@
+name: azure-virtual-network-creation
+
+on:
+  workflow_dispatch:
+    inputs:
+      application_name:
+        required: true
+        type: string
+        description: "Azure Application Name"
+      environment:
+        required: true
+        type: string
+        description: "Azure Environment"
+      temporary:
+        required: true
+        type: choice
+        options:
+        - "TRUE"
+        - "FALSE"
+        description: "Azure temporary tag"
+      location:
+        required: true
+        type: string
+        description: "Azure location"
+      resource_group_name:
+        required: true
+        type: string
+        description: "Azure Vnet resource group Name"
+      vnet_name:
+        required: true
+        type: string
+        description: "Azure Vnet Name"
+      vnet_address_space:
+        required: true
+        type: string
+        description: "Azure Vnet Address Space"
+      subnet_cidrs:
+        required: true
+        type: string
+        description: "Azure Subnet Address Space. if more than one subnet needed, seperate the CIDR range by comma"
+      action:
+        description: 'Choose action: apply or destroy'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+        - apply
+        - destroy
+
+run-name: ${{ github.actor }} creating vnet with name ${{ inputs.vnet_name }}
+
+jobs:
+  create-vnet:
+    runs-on: ubuntu-latest
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Construct terraform configuration files
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install pipenv
+      run: |
+        pip install pipenv 
+        pipenv install --skip-lock
+
+    - name: Create terraform configuration files from template
+      run: |
+        pipenv run python3 render_and_create_config_files.py --application_name "${{ inputs.application_name }}" \
+                  --environment "${{ inputs.environment }}" --temporary "${{ inputs.temporary }}" \
+                  --resource_group_name "${{ inputs.resource_group_name }}" \
+                  --vnet_name "${{ inputs.vnet_name }}" \
+                  --vnet_address_space "${{ inputs.vnet_address_space }}" \
+                  --subnet_cidrs "${{ inputs.subnet_cidrs }}"
+
+    - name: Token generator
+      uses: githubofkrishnadhas/github-access-using-githubapp@v2
+      id: app-token
+      with:
+        github_app_id: ${{ secrets.TOKEN_GENERATOR_APPID }}
+        github_app_private_key: ${{ secrets.TOKEN_GENERATOR_PRIVATE_KEY }}
+        owner: 'devwithkrishna'
+        repositories: 'azure-virtual-network-terraform-module'
+
+    - name: Set up git authentication for terraform modules
+      run: |
+        git config --local --remove-section http."https://github.com/"
+        git config --global url."https://githubofkrishnadhas:${{ steps.app-token.outputs.token }}@github.com/devwithkrishna".insteadOf "https://github.com/devwithkrishna"
+
+    - name: Terraform setup
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.5.7"
+
+    - name: terraform init
+      run: terraform -chdir=${{ inputs.resource_group_name }}/${{ inputs.vnet_name }} init
+
+    - name: Terraform Plan
+      run: terraform -chdir=${{ inputs.resource_group_name }}/${{ inputs.vnet_name }} plan -out=planfile ${{ github.event.inputs.action == 'destroy' && '-destroy' || '' }}
+
+    - name: Terraform Apply
+      if: ${{ github.event.inputs.action == 'apply' }}
+      run: terraform -chdir=${{ inputs.resource_group_name }}/${{ inputs.vnet_name }} apply -auto-approve planfile
+
+    - name: Terraform Destroy
+      if: ${{ github.event.inputs.action == 'destroy' }}
+      run: terraform -chdir=${{ inputs.resource_group_name }}/${{ inputs.vnet_name }} apply -auto-approve planfile
+
+    - name: Terraform outputs
+      run: terraform outputs -json
+
+    - name: List files
+      run: ls -lat
