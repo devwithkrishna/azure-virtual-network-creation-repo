@@ -117,7 +117,7 @@ jobs:
       run: terraform -chdir=${{ inputs.resource_group_name }}/${{ inputs.vnet_name }} apply -auto-approve planfile
 
     - name: Terraform outputs
-      run: terraform outputs -json
+      run: terraform output -json
 
     - name: List files
       run: ls -lat
