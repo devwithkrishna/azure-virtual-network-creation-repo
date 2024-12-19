@@ -1,5 +1,8 @@
 name: azure-virtual-network-creation
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -121,3 +124,12 @@ jobs:
 
     - name: List files
       run: ls -lat
+
+    - name: Commit and push the configuration file
+      run: |
+        cd ${{ inputs.resource_group_name }}/${{ inputs.vnet_name }}
+        git config user.name 'github-actions'
+        git config user.email 'actions@github.com'
+        git add .
+        git commit -m "Update configuration file for ${{ inputs.resource_group_name }}/${{ inputs.vnet_name }}"
+        git push
