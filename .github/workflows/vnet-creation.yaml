@@ -47,7 +47,7 @@ on:
         - apply
         - destroy
 
-run-name: ${{ github.actor }} creating vnet with name ${{ inputs.vnet_name }}
+run-name: ${{ github.actor }} creating vnet with name ${{ inputs.vnet_name }} in ${{ inputs.location }}
 
 jobs:
   create-vnet:
@@ -78,6 +78,7 @@ jobs:
         pipenv run python3 render_and_create_config_files.py --application_name "${{ inputs.application_name }}" \
                   --environment "${{ inputs.environment }}" --temporary "${{ inputs.temporary }}" \
                   --resource_group_name "${{ inputs.resource_group_name }}" \
+                  --location "${{ inputs.location }}" \
                   --vnet_name "${{ inputs.vnet_name }}" \
                   --vnet_address_space "${{ inputs.vnet_address_space }}" \
                   --subnet_cidrs "${{ inputs.subnet_cidrs }}"
