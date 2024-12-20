@@ -132,6 +132,7 @@ jobs:
         repositories: 'azure-virtual-network-creation-repo'
 
     - name: Commit and push the configuration file
+      if: ${{ github.event.inputs.action == 'apply' }}
       env:
         GITHUB_TOKEN: ${{ steps.token.outputs.token }}
       run: |
