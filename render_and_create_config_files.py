@@ -35,6 +35,21 @@ def create_main_tf_file(directory: str, content: str):
     with open(file_path, "w") as file:
         file.write(content)
     print(f"main.tf created at {file_path}")
+    
+
+def create_backend_tf_file(directory: str, content: str):
+    """
+    create backend terraform configuration dynamically specific folder structure
+    """
+    os.makedirs(directory, exist_ok=True)
+
+    # File path for main.tf
+    file_path = os.path.join(directory, "backend.tf")
+
+    # Write content to the file
+    with open(file_path, "w") as file:
+        file.write(content)
+    print(f"backend.tf created at {file_path}")
 
 
 def copy_file_to_structure(destination: str):
@@ -108,6 +123,16 @@ def main():
 
     # Create the main.tf file
     create_main_tf_file(directory=directory_name, content=main_tf_content)
+    
+    backend_context = {
+        "resource_group_name": args.resource_group_name,
+        "vnet_name": args.vnet_name
+    }
+    
+    # Create backend.tf file
+    backend_tf_content = render_template('backend.tf.j2', backend_context)
+
+    create_backend_tf_file(directory=directory_name, content=backend_tf_content)
 
     # Copy output.tf into destination directory
     copy_file_to_structure(destination=directory_name)
