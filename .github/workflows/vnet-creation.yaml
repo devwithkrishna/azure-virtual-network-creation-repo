@@ -119,17 +119,26 @@ jobs:
       if: ${{ github.event.inputs.action == 'destroy' }}
       run: terraform -chdir=${{ inputs.resource_group_name }}/${{ inputs.vnet_name }} apply -auto-approve planfile
 
-    - name: Terraform outputs
-      run: terraform output -json
-
     - name: List files
       run: ls -lat
 
+    - name: Token generator
+      uses: githubofkrishnadhas/github-access-using-githubapp@v2
+      id: token
+      with:
+        github_app_id: ${{ secrets.TOKEN_GENERATOR_APPID }}
+        github_app_private_key: ${{ secrets.TOKEN_GENERATOR_PRIVATE_KEY }}
+        owner: 'devwithkrishna'
+        repositories: 'azure-virtual-network-creation-repo'
+
     - name: Commit and push the configuration file
+      env:
+        GITHUB_TOKEN: ${{ steps.token.outputs.token }}
       run: |
         cd ${{ inputs.resource_group_name }}/${{ inputs.vnet_name }}
         git config user.name 'github-actions'
         git config user.email 'actions@github.com'
         git add .
         git commit -m "Update configuration file for ${{ inputs.resource_group_name }}/${{ inputs.vnet_name }}"
+        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/devwithkrishna/azure-virtual-network-creation-repo.git
         git push
