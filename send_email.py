@@ -30,8 +30,8 @@ def send_email(application_name:str, vnet_name: str, address_space: str, region:
 	print(email_content)
  
 	# SendGrid variables setup
-	sender_email = os.getenv("USER_EMAIL")
-	recipient_email = "krishnadhas@devwithkrishna.in"
+	sender_email = "krishnadhas@devwithkrishna.in"
+	recipient_email = os.getenv("USER_EMAIL")
 	sendgrid_api_key = os.getenv("SENDGRID_API_KEY")
 	cc_emails = ["krishnadhasnk@gmail.com"]
  
