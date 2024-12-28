@@ -39,3 +39,4 @@ terraform.rc
 
 # Terraform lock file
 *.lock.hcl
+*.out

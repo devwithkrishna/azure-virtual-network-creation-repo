@@ -1,7 +1,7 @@
 import argparse
 import os
 from jinja2 import Template
-
+from send_email import send_email
 
 def render_template(template_file, context):
     """
@@ -57,7 +57,7 @@ def copy_file_to_structure(destination: str):
     copy output.tf from root of repo to folder in which main.tf will be generated
     """
     # Defining the source file path in the root directory
-    root_directory = "."
+    root_directory = "./templates"
     source_file = os.path.join(root_directory, "output.tf")
 
     # Ensure the directory exists
@@ -119,7 +119,7 @@ def main():
     }
 
     # Call the render_template function to generate the main.tf content
-    main_tf_content = render_template('main.tf.j2', context)
+    main_tf_content = render_template('templates/main.tf.j2', context)
 
     # Create the main.tf file
     create_main_tf_file(directory=directory_name, content=main_tf_content)
@@ -130,13 +130,14 @@ def main():
     }
     
     # Create backend.tf file
-    backend_tf_content = render_template('backend.tf.j2', backend_context)
+    backend_tf_content = render_template('templates/backend.tf.j2', backend_context)
 
     create_backend_tf_file(directory=directory_name, content=backend_tf_content)
 
     # Copy output.tf into destination directory
     copy_file_to_structure(destination=directory_name)
 
+    # Send email
 
 # Run the script
 if __name__ == "__main__":
