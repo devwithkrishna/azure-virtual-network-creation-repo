@@ -1,4 +1,4 @@
-name: azure-virtual-network-creation
+name: azcli-installation
 
 permissions:
   contents: write
@@ -8,7 +8,7 @@ on:
   
 jobs:
 
-  verify-vnet:
+  azcli-installation:
     runs-on: ubuntu-latest
     steps:
 
