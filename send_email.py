@@ -2,8 +2,7 @@ import os
 import argparse
 from jinja2 import Environment, FileSystemLoader
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, To, Cc
-
+from sendgrid.helpers.mail import Mail, To, Cc,Personalization
 def send_email(application_name:str, vnet_name: str, address_space: str, region: str, subscription_id: str, environment: str):
 	"""send email to helpdesk using sendgrid"""
 
@@ -50,11 +49,19 @@ def send_email(application_name:str, vnet_name: str, address_space: str, region:
 	message = Mail(
 		from_email=sender_email,
 		to_emails=To(recipient_email),
-		cc=[Cc(email) for email in cc_emails],
 		subject=f"Express Route Setup Request for {application_name}",
 		html_content=email_content,
 	)
- 
+
+	personalization = Personalization()
+
+	personalization.add_to(To(recipient_email))
+
+	for cc in cc_emails:
+		personalization.add_cc(Cc(cc))
+
+ 	message.add_personalization(personalization=personalization)
+
 	# Send the email
 	try:
 		sg = SendGridAPIClient(sendgrid_api_key)
