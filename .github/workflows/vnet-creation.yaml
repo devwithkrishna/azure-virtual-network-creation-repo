@@ -155,10 +155,10 @@ jobs:
         git commit -m "Update configuration file for ${{ inputs.resource_group_name }}/${{ inputs.vnet_name }}"
         git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/devwithkrishna/azure-virtual-network-creation-repo.git
         git push
+
   verify-vnet:
     runs-on: ubuntu-latest
     needs: create-vnet
-    if: needs.create-vnet.outputs.execute_status == 'true'
 
     steps:
 
