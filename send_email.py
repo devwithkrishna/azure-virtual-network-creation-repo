@@ -60,7 +60,7 @@ def send_email(application_name:str, vnet_name: str, address_space: str, region:
 	for cc in cc_emails:
 		personalization.add_cc(Cc(cc))
 
- 	message.add_personalization(personalization=personalization)
+	message.add_personalization(personalization=personalization)
 
 	# Send the email
 	try:
@@ -68,7 +68,7 @@ def send_email(application_name:str, vnet_name: str, address_space: str, region:
 		response = sg.send(message)
 		print(f"Email sent successfully! Status code: {response.status_code}")
 	except Exception as e:
-	    print(f"Failed to send email: {str(e)}")
+		print(f"Failed to send email: {str(e)}")
 
 
 
