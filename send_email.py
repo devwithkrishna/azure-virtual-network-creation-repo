@@ -36,6 +36,11 @@ def send_email(application_name:str, vnet_name: str, address_space: str, region:
 	recipient_email = os.getenv("USER_EMAIL")
 	sendgrid_api_key = os.getenv("SENDGRID_API_KEY")
 	cc_emails = ["krishnadhasnk@gmail.com"]
+
+	# Print the values
+	print(f"Sender Email: {sender_email}")
+	print(f"Recipient Email: {recipient_email}")
+	print(f"SendGrid API Key: {sendgrid_api_key}")
  
 	if not sender_email or not recipient_email or not sendgrid_api_key:
 		raise ValueError("Missing SENDGRID_SENDER_EMAIL, SENDGRID_RECIPIENT_EMAIL, or SENDGRID_API_KEY environment variable.")
