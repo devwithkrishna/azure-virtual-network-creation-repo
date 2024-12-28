@@ -8,7 +8,7 @@ module "vnet" {
   location            = "centralindia"
   resource_group_name = "ARCHITECTS-UEAST-AKS-VNET-RG"
   vnet_name           = "ARCHITECTS-UEAST-AKS-VNET"
-  subnet_cidrs = ["10.210.1.0/24"]
+  subnet_cidrs = ["10.210.1.0/26"]
   vnet_address_space  = ["10.210.0.0/23"]
 
 }
