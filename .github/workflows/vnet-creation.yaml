@@ -241,6 +241,8 @@ jobs:
         echo "USER_EMAIL=$USER_EMAIL" >> $GITHUB_ENV
 
     - name: prepare email for Helpdesk team
+      env:
+        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       run: |
         pipenv run python3 send_email.py --application_name "${{ inputs.application_name }}" \
                   --environment "${{ inputs.environment }}" \
