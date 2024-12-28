@@ -158,6 +158,8 @@ jobs:
 
   verify-vnet:
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.action == 'apply' }}
+
     needs: create-vnet
 
     steps:
