@@ -170,23 +170,27 @@ jobs:
     - uses: azure/login@v2
       with:
         creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
-
+    - name: Install jq
+      run: |
+        sudo apt update
+        sudo apt-get install jq -y
+      
     - name: install azure cli
       run: |
-        apt-get update 
-        apt-get install apt-transport-https ca-certificates curl gnupg lsb-release -y
-        mkdir -p /etc/apt/keyrings
-        curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null
-        chmod go+r /etc/apt/keyrings/microsoft.gpg
+        sudo apt-get update 
+        sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release -y
+        sudo mkdir -p /etc/apt/keyrings
+        curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null
+        sudo chmod go+r /etc/apt/keyrings/microsoft.gpg
         AZ_DIST=$(lsb_release -cs)
         echo "Types: deb
         URIs: https://packages.microsoft.com/repos/azure-cli/
         Suites: ${AZ_DIST}
         Components: main
         Architectures: $(dpkg --print-architecture)
-        Signed-by: /etc/apt/keyrings/microsoft.gpg" | tee /etc/apt/sources.list.d/azure-cli.sources
-        apt-get update
-        apt-get install azure-cli -y
+        Signed-by: /etc/apt/keyrings/microsoft.gpg" | sudo tee /etc/apt/sources.list.d/azure-cli.sources
+        sudo apt-get update
+        sudo apt-get install azure-cli -y
         az --version
 
     - name: Azure CLI script
@@ -194,7 +198,7 @@ jobs:
           az account show
           # Check if VNet exists
           echo "Checking if VNet exists..."
-          output=$(az network vnet show -g MyResourceGroup -n MyVNet 2>/dev/null)
+          output=$(az network vnet show -g "${{ inputs.resource_group_name }}" -n "${{ inputs.vnet_name }}" 2>/dev/null)
 
           if echo "$output" | jq empty > /dev/null 2>&1; then
             echo "VNet exists. Command succeeded."
