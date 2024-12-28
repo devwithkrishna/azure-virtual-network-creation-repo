@@ -50,7 +50,7 @@ on:
         - apply
         - destroy
 
-run-name: ${{ github.actor }} creating vnet with name ${{ inputs.vnet_name }} in ${{ inputs.location }}
+run-name: ${{ github.actor }} ${{ inputs.action }}ing vnet with name ${{ inputs.vnet_name }} in ${{ inputs.location }}
 
 jobs:
   create-vnet:

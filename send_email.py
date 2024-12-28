@@ -8,7 +8,8 @@ def send_email(application_name:str, vnet_name: str, address_space: str, region:
 	"""send email to helpdesk using sendgrid"""
 
 	# Set up the Jinja2 environment and load the template file
-	env = Environment(loader=FileSystemLoader('template'))
+	env = Environment(loader=FileSystemLoader('templates'))
+
 	template = env.get_template('email.j2')
 
 	# Data to populate the template
@@ -28,6 +29,7 @@ def send_email(application_name:str, vnet_name: str, address_space: str, region:
 
 	# Output the rendered email
 	print(email_content)
+
  
 	# SendGrid variables setup
 	sender_email = "krishnadhas@devwithkrishna.in"
@@ -55,7 +57,7 @@ def send_email(application_name:str, vnet_name: str, address_space: str, region:
 		print(f"Email sent successfully! Status code: {response.status_code}")
 	except Exception as e:
 	    print(f"Failed to send email: {str(e)}")
-	
+
 
 
 def main():

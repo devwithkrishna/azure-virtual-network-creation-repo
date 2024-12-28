@@ -137,7 +137,6 @@ def main():
     # Copy output.tf into destination directory
     copy_file_to_structure(destination=directory_name)
 
-    # Send email
 
 # Run the script
 if __name__ == "__main__":
